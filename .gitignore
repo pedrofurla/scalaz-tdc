@@ -1,0 +1,11 @@
+.DS_Store
+target
+.idea
+*.sublime-project
+*.sublime-workspace
+*.orig
+*~
+build/*.jar
+*.swp
+*.tags*
+.floo*
