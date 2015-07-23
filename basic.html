@@ -1,0 +1,1175 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Scalaz - conceitos e exemplos</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+body {
+  background-color: #222;
+  color: #eee;
+}
+
+h1, h3 {
+  font-family: Impact;
+  font-weight: bold;
+  font-style: italic;
+}
+
+pre code {
+  color: #ccc;
+  font-size: 140%;
+}
+
+.keyword {
+  color: #0086b3 !important;
+  font-weight: inherit !important;
+}
+
+.tag {
+  color: #900 !important;
+}
+
+code {
+  background-color: inherit;
+}
+
+em {
+  border-bottom: 1px solid #666;
+}
+
+
+blockquote {
+ font-style: italic
+}
+
+body {
+  background-color: #222;
+  color: #eee;
+}
+
+ul {
+  padding: 0 0 0 40px;
+}
+
+li p {
+  margin: 0;
+}
+
+.progress {
+  display: none
+}
+
+.slide-content {
+  padding-top: 20px
+}
+
+h1, h3 {
+  font-family: Impact;
+  font-weight: bold;
+  font-style: italic;
+}
+
+pre code {
+  color: #ccc;
+  font-size: 140%;
+}
+
+.keyword {
+  color: #0086b3 !important;
+  font-weight: inherit !important;
+}
+
+.tag {
+  color: #900 !important;
+}
+
+code {
+  background-color: inherit;
+}
+
+em {
+  border-bottom: 1px solid #666;
+}
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+  <div class="slide " id="slide-1">
+    <section class="slide-content"><h1 id="fp-e-scalaz">FP e ScalaZ</h1>
+<h2 id="motiva-es-conceitos-e-exemplos-mas-sem-mist-rios-quase-">motivações, conceitos e exemplos (mas sem mistérios... quase)</h2>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-2">
+    <section class="slide-content"><h4 id="t-picos">Tópicos</h4>
+<ul>
+<li><p>Motivação </p>
+<ul>
+<li>Sistema tipos</li>
+<li>Algums mitos</li>
+<li>Scala</li>
+<li>ScalaZ</li>
+</ul>
+</li>
+<li><p>Classes de tipos</p>
+<ul>
+<li>Show, Equal, Order, Enum</li>
+<li>Derivação</li>
+<li>ADTs úteis: Option, \/ Either</li>
+<li>Abstrações: Functor, Monoids</li>
+</ul>
+</li>
+</ul>
+<p>&quot;Por que usar scalaz se todo mundo diz que é complicado demais?&quot;</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-3">
+    <section class="slide-content"><h3 id="o-porqu-">O Porquê</h3>
+<ul>
+<li>Uma boa parte do tempo desenvolvendo software acaba sendo <ul>
+<li>corrigindo bugs bobos - teste ajudam</li>
+<li>testes são específicos para um caso:   <blockquote>
+<p>&quot;Testes mostram a presença de bugs, não a ausência de bugs&quot; - E. Dijkstra</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden  " id="slide-4">
+    <section class="slide-content"><h3 id="o-porqu-">O Porquê</h3>
+<ul>
+<li>Uma boa parte do tempo desenvolvendo software acaba sendo<ul>
+<li>gerenciando complexidade - software cresce e muda e as vez é mutilados:<blockquote>
+<p>&quot;Sistema X quase faz o que o sistema Y precisa, vamos mudar X só um pouco pra atender Y&quot; acaba sendo um contrato com o diabo</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-5">
+    <section class="slide-content"><ul>
+<li>E se houvesse uma maneira de provar propriedades sobre o código fonte?<ul>
+<li>Sistemas de tipos! (comentários?)  </li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>&quot;Um sistema de tipos é um método sintático capaz de comprovar a ausência de certos comportamentos do programa classificando frases de acordo com os tipos de valores que calculam.&quot; Types and Programming Languages, B. Pierce</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-6">
+    <section class="slide-content"><ul>
+<li>Mas C/C++, Java, Pascal já usam esse tal de &quot;sistema de tipos&quot; há muito tempo e não parecem ajudar tanto.<ul>
+<li>Mais ou menos, por exemplo, cadê o polimorfismo paramétrico★?</li>
+<li>Ex.: SML, apenas poucos anos mais novo que C.</li>
+</ul>
+</li>
+</ul>
+<p>★ Não confundir com o polimorfismo de OO, são complemente distintos.</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-7">
+    <section class="slide-content"><ul>
+<li>Declarações gigantescas fazem o código muito difícil de manter! <ul>
+<li>Verdade, e muitas são completamente desnecessárias.</li>
+<li>Ex.: SML</li>
+</ul>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden     " id="slide-8">
+    <section class="slide-content"><ul>
+<li>Um sistema de tipos robusto e utilizado corretamente nos da<ul>
+<li>pequenas provas sobre características do código</li>
+<li>maximiza o quanto podemos presumir</li>
+<li>detecta inconsistências</li>
+<li>facilita muito o refactoring </li>
+<li>é a documentação mais honesta que um sistema pode ter</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>&quot;Programas são Provas&quot;, artigo do Philip Wadler</p>
+</blockquote>
+<ul>
+<li>Em suma, o sistema de tipos eleva a nossa capacidade de pensar sobre o código e consequentemente manipula-lo com segurança</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-9">
+    <section class="slide-content"><p>Espero tê-los convencidos que pelo menos essa coisa de &quot;sistema de tipos&quot; possa ter algum mérito.</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-10">
+    <section class="slide-content"><ul>
+<li><p><em>Scala</em> nos da o sistema de tipos.</p>
+</li>
+<li><p>Polimorfismo paramético (ou generics em Java)</p>
+<pre><code class="lang-scala"><span class="keyword">def</span> const[A](a:A):A = a</code></pre>
+</li>
+<li><p>Polimorfismo ad-hoc:</p>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-11">
+    <section class="slide-content"><p>(TODO cuidado o próximo slide contem código)</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-12">
+    <section class="slide-content"><h2 id="o-que-falta-">O que falta?</h2>
+<p>Notei que FP quando feito corretamente tem uma característica muito interessante e útil. Uma linha de código nos diz exatamente o que precisamos saber sobre esse código.</p>
+<pre><code class="lang-haskell">   quickSort :: <span class="type">Ord</span> a =&gt; [a] -&gt; [a]
+   quickSort []     = []                               
+   quickSort (x:xs) = 
+     quickSort [a | a &lt;- xs, a &lt; x] ++ [x] ++ 
+       quickSort [a | a &lt;- xs, a &gt;= x]</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-13">
+    <section class="slide-content"><h2 id="o-que-falta-">O que falta?</h2>
+<ul>
+<li>Imutabilidade </li>
+</ul>
+<pre><code class="lang-scala">scala&gt; <span class="class"><span class="keyword">case</span> <span class="keyword">class</span> <span class="title">Pessoa</span><span class="params">(nome:String, idade:Int)</span></span>
+defined <span class="class"><span class="keyword">class</span> <span class="title">Pessoa</span></span>
+
+scala&gt; <span class="keyword">val</span> p1 = Pessoa(<span class="string">"João"</span>, <span class="number">20</span>)
+p1: Pessoa = Pessoa(João,<span class="number">20</span>)
+
+scala&gt; <span class="keyword">val</span> p2 = p1.copy(nome = <span class="string">"Pedro"</span>)
+p2: Pessoa = Pessoa(Pedro,<span class="number">20</span>)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-14">
+    <section class="slide-content"><ul>
+<li>Raciocínio equacional<ul>
+<li>Qualquer variável pode ser substituída pelo seu valor (ou expressão) sem alterar o significado do programa</li>
+</ul>
+</li>
+</ul>
+<p>(TODO exemplo do Runar comparando String e StringBuilder)</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-15">
+    <section class="slide-content"><ul>
+<li>Ausência de efeitos colaterais (o que não significa ausência de efeitos!) </li>
+</ul>
+<p>(TODO exemplo usando IO[\/[Err, A]] ou algo do doobie)</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-16">
+    <section class="slide-content"><p>A realidade em Scala não é tão bela, mas com disciplina nos aproximamos dessa beleza.</p>
+</section>
+  </div>
+  <div class="slide hidden   " id="slide-17">
+    <section class="slide-content"><h1 id="scalaz-">ScalaZ!</h1>
+<ul>
+<li>Assume e só faz uso da parte &quot;segura&quot; de Scala</li>
+<li>Segura:<ul>
+<li><del>null</del></li>
+<li><del>exceptions</del></li>
+<li><del>efeitos colaterais</del></li>
+</ul>
+</li>
+</ul>
+<p>(TODO no resto dessa apresentação demonstrarei que é fácil usar scalaz e podemos também trabalhar com essas premissas)</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-18">
+    <section class="slide-content"><h3 id="classes-de-tipos-type-classes-">Classes de tipos - <strong>type classes</strong></h3>
+<p>O problema:</p>
+<blockquote>
+<p>&quot;A partir de um tipo de dados, adicionar novos tipos de dados e novas funções mas
+sem recompilar o código existente e mantendo as garantias da tipagem estática&quot; - Philip Wadler</p>
+</blockquote>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-19">
+    <section class="slide-content"><p>A soluções em FP:</p>
+<ul>
+<li>Polimorfismo paramétrico ★<pre><code class="lang-scala"><span class="keyword">def</span> append[A](x: List[A], y:List[A]):List[A] = x ++ y</code></pre>
+</li>
+<li>Classes de tipo (polimorfismo ad-hoc★★):<pre><code class="lang-scala"><span class="keyword">def</span> sum[A:Numeric](x: A, y:A) = x + y</code></pre>
+</li>
+</ul>
+<p>★ Polimorfismo paramétrico é o que Java chama de <em>generics</em></p>
+<p>★★ <em>Ad-hoc</em> por que é específico para cada caso. Também o tipo de polimorfismo presente em OO.</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-20">
+    <section class="slide-content"><h3 id="classes-de-tipos-type-classes-">Classes de tipos - <strong>type classes</strong></h3>
+<ul>
+<li>Classes de tipo (polimorfismo ad-hoc):</li>
+</ul>
+<pre><code class="lang-scala"><span class="keyword">def</span> sum[A:Numeric](x: A, y:A) = x add y <span class="comment">// ilustrativo</span></code></pre>
+<p>O parâmetro <code>A</code> lê-se como: para todo <code>A</code> para o qual exista uma instância <code>Numeric[A]</code>. </p>
+<pre><code class="lang-scala">scala&gt; <span class="class"><span class="keyword">trait</span> <span class="title">Numeric</span>[<span class="title">A</span>] {</span> <span class="keyword">def</span> mult(y:A):A } 
+defined <span class="class"><span class="keyword">trait</span> <span class="title">Numeric</span></span>
+
+scala&gt; implicit <span class="keyword">def</span> intNumeric(x:Int):Numeric[Int] = 
+     |   <span class="keyword">new</span> Numeric[Int] { <span class="keyword">def</span> mult(y:Int):Int = x * y } 
+intNumeric: (x: Int)Numeric[Int]</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-21">
+    <section class="slide-content"><h3 id="a-nossa-primeira-classe-de-tipos">A nossa primeira classe de tipos</h3>
+<h4 id="show-a-">Show[A]</h4>
+<ul>
+<li>Ilustração de como ScalaZ implementa suas classes de tipos</li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Show</span>[<span class="title">F</span>] {</span>
+  <span class="keyword">def</span> show(x:F):String
+}</code></pre>
+<ul>
+<li>É essencialmente <code>toString</code>, mas é definida <strong>fora</strong> da classe/objeto, <code>toString</code> geralmente é parte da classe/objeto.</li>
+<li>Essa é uma das vantages de classes de tipo.</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-22">
+    <section class="slide-content"><h4 id="show-a-">Show[A]</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Show</span>[<span class="title">F</span>] {</span>
+  <span class="keyword">def</span> show(x:F):String
+}</code></pre>
+<ul>
+<li>É essencialmente <code>toString</code>, mas é definida <strong>fora</strong> da classe/objeto, <code>toString</code> geralmente é parte da classe/objeto.</li>
+<li>Essa é uma das vantages de classes de tipo.</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-23">
+    <section class="slide-content"><h4 id="implementando-show-a-">Implementando Show[A]</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Show</span>[<span class="title">F</span>] {</span>
+  <span class="keyword">def</span> show(x:F):String
+}</code></pre>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">case</span> <span class="keyword">class</span> <span class="title">Pessoa</span><span class="params">(nome:String, idade:Int)</span></span>
+<span class="keyword">val</span> pessoa = Pessoa(<span class="string">"João"</span>, <span class="number">20</span>)</code></pre>
+<pre><code class="lang-scala">implicit <span class="class"><span class="keyword">object</span> <span class="title">showPessoa</span> <span class="keyword">extends</span> <span class="title">Show</span>[<span class="title">Pessoa</span>] {</span>
+  <span class="keyword">def</span> show(x:Pessoa) = 
+    <span class="string">"Pessoa("</span>+<span class="string">"\""</span>+x.nome+<span class="string">"\", "</span>+x.idade.toString+<span class="string">")"</span>
+}</code></pre>
+<pre><code class="lang-scala">scala&gt; implicitly[Show[Pessoa]].show(pessoa)
+res0: String = Pessoa(<span class="string">"João"</span>, <span class="number">20</span>)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-24">
+    <section class="slide-content"><h4 id="show-a-ops-and-syntax-">Show[A] - <em>Ops and Syntax</em></h4>
+<ul>
+<li>ShowOps - Show Operations, provê o método <code>show</code></li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">class</span> <span class="title">ShowOps</span>[<span class="title">A</span>]<span class="params">(val a:A)</span><span class="params">(implicit showA: Show[A])</span> {</span>
+  <span class="keyword">def</span> show = showA.show(a)
+}</code></pre>
+<ul>
+<li>ShowSyntax - adiciona o método <code>show</code> - <em>Pimp my library!</em></li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">object</span> <span class="title">ShowSyntax</span> {</span>
+  implicit <span class="keyword">def</span> ToShowOps[A](a:A)(implicit showA:Show[A]) = 
+    <span class="keyword">new</span> ShowOps[A](a)(showA)
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-25">
+    <section class="slide-content"><h4 id="show-a-">Show[A]</h4>
+<ul>
+<li>Agora podemos:</li>
+</ul>
+<pre><code class="lang-scala">scala&gt; <span class="keyword">import</span> ShowSyntax._
+<span class="keyword">import</span> ShowSyntax._
+
+scala&gt; pessoa.show
+res1: String = Pessoa(<span class="string">"João"</span>, <span class="number">20</span>)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-26">
+    <section class="slide-content"><h4 id="object-equals">Object#equals</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">case</span> <span class="keyword">class</span> <span class="title">Carro</span><span class="params">(marca:String)</span></span>
+<span class="keyword">val</span> carro = Carro(<span class="string">"Fiat"</span>)</code></pre>
+<ul>
+<li>Tem algo errado aqui</li>
+</ul>
+<pre><code class="lang-scala">scala&gt; pessoa == carro
+&lt;console&gt;:<span class="number">28</span>: warning: comparing <span class="class"><span class="keyword">case</span> <span class="keyword">class</span> <span class="title">values</span> <span class="title">of</span> <span class="title">types</span> <span class="title">Pessoa</span> <span class="title">and</span> <span class="title">Carro</span> <span class="title">using</span> `==' <span class="title">will</span> <span class="title">always</span> <span class="title">yield</span> <span class="title">false</span></span>
+       pessoa == carro
+              ^
+res2: Boolean = <span class="keyword">false</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-27">
+    <section class="slide-content"><h4 id="object-equals">Object#equals</h4>
+<ul>
+<li>Tem algo errado aqui</li>
+</ul>
+<pre><code class="lang-scala">scala&gt; pessoa == carro
+&lt;console&gt;:<span class="number">28</span>: warning: comparing <span class="class"><span class="keyword">case</span> <span class="keyword">class</span> <span class="title">values</span> <span class="title">of</span> <span class="title">types</span> <span class="title">Pessoa</span> <span class="title">and</span> <span class="title">Carro</span> <span class="title">using</span> `==' <span class="title">will</span> <span class="title">always</span> <span class="title">yield</span> <span class="title">false</span></span>
+       pessoa == carro
+              ^
+res3: Boolean = <span class="keyword">false</span></code></pre>
+<ul>
+<li>Por que isso compila?</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-28">
+    <section class="slide-content"><h4 id="object-equals">Object#equals</h4>
+<ul>
+<li>O problema:</li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">class</span> <span class="title">Object</span> {</span>
+  <span class="keyword">def</span> equals(x:Any): Boolean 
+}</code></pre>
+<ul>
+<li>Vamos corrigir isso...</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-29">
+    <section class="slide-content"><h4 id="equal-a-">Equal[A]</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Equal</span>[<span class="title">A</span>]{</span>
+  <span class="keyword">def</span> equal(a1: A, a2: A):Boolean
+}</code></pre>
+<p>Note os parâmetros <code>a1</code> e <code>a2</code>, ambos tem o mesmo tipo</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-30">
+    <section class="slide-content"><h4 id="equal-a-">Equal[A]</h4>
+<ul>
+<li>As operações</li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">class</span> <span class="title">EqualOps</span>[<span class="title">A</span>]<span class="params">(val left: A)</span><span class="params">(implicit val equalA: Equal[A])</span> {</span>
+  <span class="keyword">def</span> ===(right: A): Boolean = equalA.equal(left, right)
+  <span class="keyword">def</span> =/=(right: A): Boolean = !equalA.equal(left, right)
+}</code></pre>
+<ul>
+<li>Syntax</li>
+</ul>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">object</span> <span class="title">EqualSyntax</span> {</span>
+  <span class="keyword">def</span> ToEqualOps[A](left:A)(implicit equalA:Equal[A]) = 
+    <span class="keyword">new</span> EqualOps(left)
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  " id="slide-31">
+    <section class="slide-content"><h4 id="equal-a-">Equal[A]</h4>
+<ul>
+<li>A nossa implementação</li>
+</ul>
+<pre><code class="lang-scala">implicit <span class="class"><span class="keyword">object</span> <span class="title">CarroEq</span> <span class="keyword">extends</span> <span class="title">Equal</span>[<span class="title">Carro</span>]{</span>
+ <span class="keyword">def</span> equal(c1:Carro, c2:Carro) = c1 == c2
+}
+
+implicit <span class="class"><span class="keyword">object</span> <span class="title">PessoaEq</span> <span class="keyword">extends</span> <span class="title">Equal</span>[<span class="title">Pessoa</span>]{</span>
+ <span class="keyword">def</span> equal(p1:Pessoa, p2:Pessoa) = p1 == p2
+}</code></pre>
+<pre><code class="lang-scala">scala&gt; pessoa === carro
+&lt;console&gt;:<span class="number">36</span>: error: value === is not a member of Pessoa
+       pessoa === carro
+              ^</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-32">
+    <section class="slide-content"><h4 id="equal-a-">Equal[A]</h4>
+<p>Muito <em>boilerplate</em> até agora para coisas muito simples. Vamos retificar isso.</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-33">
+    <section class="slide-content"><h4 id="show-a-equal-a-">Show[A] &amp; Equal[A]</h4>
+<pre><code class="lang-scala"><span class="keyword">import</span> scalaz._
+implicit <span class="keyword">val</span> eqPessoa = 
+  Equal.equal[Pessoa]{ (p1, p2) =&gt; p1 == p2 }
+implicit <span class="keyword">val</span> showPessoa = 
+  Show.show[Pessoa]{ p =&gt; <span class="string">"Pessoa("</span>+<span class="string">"\""</span>+p.nome+<span class="string">"\", "</span>+p.idade.toString+<span class="string">")"</span> }
+
+<span class="keyword">import</span> scalaz.syntax.show._
+<span class="keyword">import</span> scalaz.syntax.equal._</code></pre>
+<pre><code class="lang-scala">scala&gt; pessoa.show
+res7: scalaz.Cord = Pessoa(<span class="string">"João"</span>, <span class="number">20</span>)
+
+scala&gt; pessoa === Pessoa(<span class="string">"outro"</span>,<span class="number">22</span>)
+res8: Boolean = <span class="keyword">false</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-34">
+    <section class="slide-content"><h4 id="java-compare">Java compare</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Comparator</span>[<span class="title">A</span>] {</span>
+  <span class="keyword">def</span> compare(a1: A, a2:A):Int
+}</code></pre>
+<ul>
+<li>Alguém nota algum problem com o método <code>compare</code>?</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-35">
+    <section class="slide-content"><h4 id="java-compare-">Java <code>compare</code></h4>
+<pre><code class="lang-scala"><span class="keyword">def</span> compare(a1: A, a2:A):Int</code></pre>
+<p>Só queremos determinar se algo é maior, menor ou igual, por que retornar um tipo que tem 4.294.967.296 valores?</p>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-36">
+    <section class="slide-content"><h4 id="ordering-ou-um-adt-bem-simples-">Ordering (ou um ADT bem simples)</h4>
+<pre><code class="lang-scala"><span class="keyword">package</span> scalaz
+<span class="keyword">sealed</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Ordering</span><span class="params">(val toInt: Int, val name: String)</span> </span>
+<span class="class"><span class="keyword">object</span> <span class="title">Ordering</span> <span class="keyword">extends</span> {</span>
+  <span class="keyword">case</span> <span class="class"><span class="keyword">object</span> <span class="title">LT</span> <span class="keyword">extends</span> <span class="title">Ordering</span><span class="params">(-1, <span class="string">"LT"</span>)</span> {</span> <span class="keyword">def</span> complement = GT }
+  <span class="keyword">case</span> <span class="class"><span class="keyword">object</span> <span class="title">EQ</span> <span class="keyword">extends</span> <span class="title">Ordering</span><span class="params">(0,  <span class="string">"EQ"</span>)</span> {</span> <span class="keyword">def</span> complement = EQ }
+  <span class="keyword">case</span> <span class="class"><span class="keyword">object</span> <span class="title">GT</span> <span class="keyword">extends</span> <span class="title">Ordering</span><span class="params">(1,  <span class="string">"GT"</span>)</span> {</span> <span class="keyword">def</span> complement = LT }
+}</code></pre>
+<ul>
+<li>Não confundir com <code>scala.math.Order</code></li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-37">
+    <section class="slide-content"><h4 id="order">Order</h4>
+<pre><code class="lang-scala"><span class="class"><span class="keyword">trait</span> <span class="title">Order</span>[<span class="title">F</span>] <span class="keyword">extends</span> <span class="title">Equal</span>[<span class="title">F</span>] {</span>
+  <span class="keyword">def</span> apply(x: F, y: F): Ordering = order(x, y)
+  <span class="keyword">def</span> order(x: F, y: F): Ordering
+  <span class="keyword">def</span> equal(x: F, y: F): Boolean = order(x, y) == Ordering.EQ
+  <span class="keyword">def</span> lessThan(x: F, y: F) = order(x, y) == Ordering.LT
+  <span class="keyword">def</span> lessThanOrEqual(x: F, y: F) = order(x, y) != Ordering.GT
+  <span class="keyword">def</span> greaterThan(x: F, y: F) = order(x, y) == Ordering.GT
+  <span class="keyword">def</span> greaterThanOrEqual(x: F, y: F) = order(x, y) != Ordering.LT
+  <span class="keyword">def</span> max(x: F, y: F) = <span class="keyword">if</span> (greaterThanOrEqual(x, y)) x <span class="keyword">else</span> y
+  <span class="keyword">def</span> min(x: F, y: F) = <span class="keyword">if</span> (lessThan(x, y)) x <span class="keyword">else</span> y
+}</code></pre>
+<ul>
+<li>Nos da comparações mais honestas, em vez de 2^32 valores, apenas GT, EQ e LT</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-38">
+    <section class="slide-content"><h4 id="order-opera-es">Order - operações</h4>
+<ul>
+<li>A syntax contém entre outros</li>
+</ul>
+<pre><code class="lang-scala">  <span class="keyword">final</span> <span class="keyword">def</span> &lt;(other: F): Boolean = F.lessThan(self, other)
+  <span class="keyword">final</span> <span class="keyword">def</span> &lt;=(other: F): Boolean = F.lessThanOrEqual(self, other)
+  <span class="keyword">final</span> <span class="keyword">def</span> &gt;(other: F): Boolean = F.greaterThan(self, other)
+  <span class="keyword">final</span> <span class="keyword">def</span> &gt;=(other: F): Boolean = F.greaterThanOrEqual(self, other)
+  <span class="keyword">final</span> <span class="keyword">def</span> cmp(other: F): Ordering = F.order(self, other)</code></pre>
+<ul>
+<li>Onde <code>self</code> é o operando da esquerda e <code>other</code> o da direita</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-39">
+    <section class="slide-content"><h4 id="order-estendendo-nosso-exemplo">Order - estendendo nosso exemplo</h4>
+<pre><code class="lang-scala"><span class="keyword">import</span> scalaz.syntax.order._
+<span class="keyword">import</span> scalaz.std.string._
+implicit <span class="keyword">val</span> carroOrder = Order.orderBy[Carro,String](_.marca)</code></pre>
+<pre><code class="lang-scala">scala&gt; carro &lt; Carro(<span class="string">"BMW"</span>)
+res9: Boolean = <span class="keyword">false</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-40">
+    <section class="slide-content"><h4 id="order-exemplo-mais-ilustrativo">Order - exemplo mais ilustrativo</h4>
+<p>Comparando o <code>carro</code> original com uma lista de carro.</p>
+<pre><code class="lang-scala">scala&gt; <span class="keyword">val</span> carros = List(Carro(<span class="string">"Wosk"</span>), Carro(<span class="string">"BMW"</span>), Carro(<span class="string">"Fiat"</span>))
+carros: List[Carro] = List(Carro(Wosk), Carro(BMW), Carro(Fiat))
+
+scala&gt; carro.show
+res10: scalaz.Cord = Carro(<span class="string">"Fiat"</span>)
+
+scala&gt; carros map { 
+     |   c =&gt; (c.show, carro.cmp(c).show) } mkString <span class="string">"\n"</span>
+res11: String =
+(Carro(<span class="string">"Wosk"</span>),LT)
+(Carro(<span class="string">"BMW"</span>),GT)
+(Carro(<span class="string">"Fiat"</span>),EQ)</code></pre>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-41">
+    <section class="slide-content"><h4 id="order-trapassa">Order - trapassa</h4>
+<pre><code class="lang-scala">implicit <span class="keyword">val</span> carroOrder = Order.orderBy[Carro,String](_.marca)</code></pre>
+<ul>
+<li>Definindo a ordem de Carro, por Carro#marca. </li>
+<li>Isso é possível pois já existe uma Order[String] provida pelo ScalaZ</li>
+<li>Foi importada com `import scalaz.std.string._</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-42">
+    <section class="slide-content"><h4 id="option-ou-null-nunca-mais">Option - ou <code>null</code> nunca mais</h4>
+<h4 id="functor-uma-vez-dentro-nunca-mais-fora">Functor - uma vez dentro, nunca mais fora</h4>
+</section>
+  </div>
+  <div class="slide hidden " id="slide-43">
+    <section class="slide-content"><p>(TODO acho que isso fica melhor no final de tudo)</p>
+<ul>
+<li><p>Algums outros termos que eu gostaria de conhecer quando comecei a aprender FP (e que também teriam me ajudado antes disso):</p>
+<ul>
+<li><em>Algebraic datatype</em> (vs herança)</li>
+<li><em>Tipos estruturais</em> (vs tipagem nominal)</li>
+<li><em>Inferência de tipos (Hindley-Milner-Dumas)</em> (vs anotação de tipos)</li>
+<li>E mais: Isomorfismo de Curry-Howard, FRP, Haskell, Coq, Idris, Epigram, tipos dependentes, Philip Wadler, Luca Cardelli (ops, esses são pessoas) e o infame Monad, TaPL </li>
+</ul>
+<p>Os três primeiros são surpreendentemente muito simples e muito úteis!</p>
+</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-44">
+    <section class="slide-content"><div class="author">
+  <h1 class="name">Pedro Furlanetto</h1>
+    <h3 class="twitter">
+      <a href="http://twitter.com/@pedrofurla">@pedrofurla</a>
+    </h3>
+</div>
+</section>
+  </div>
+
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPosition());
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>
