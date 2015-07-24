@@ -28,3 +28,10 @@ initialCommands :=
     |val carro = Carro("Fiat")
     |
   """.stripMargin
+
+val cleaver = taskKey[Unit]("Runs nodejs cleaver")
+
+cleaver := {
+  println("Processing 1.md");
+  "node node_modules/cleaver/bin/cleaver 1.md".split(" ").toSeq.run
+}

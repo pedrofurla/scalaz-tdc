@@ -8,6 +8,12 @@ body {
   color: #eee;
 }
 
+h4 {
+  margin-top: auto;
+  margin-bottom: auto;
+  text-decoration: underline;
+}
+
 ul {
   padding: 0 0 0 40px;
 }
@@ -21,7 +27,8 @@ li p {
 }
 
 .slide-content {
-  padding-top: 20px
+  padding-top: 10px;
+  margin-top: 10px
 }
 
 h1, h3 {
